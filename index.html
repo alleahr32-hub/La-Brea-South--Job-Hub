@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Brea Job Hub</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f4f8;
+}
+
+header {
+  background: linear-gradient(135deg, #003366, #00a8e8);
+  color: white;
+  text-align: center;
+  padding: 30px 20px;
+}
+
+nav {
+  background: #002855;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: white;
+  padding: 12px 20px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  background: #00a8e8;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  margin: 15px 0;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #003366;
+}
+
+button {
+  background: #00a8e8;
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0077b6;
+}
+
+footer {
+  background: #003366;
+  color: white;
+  text-align: center;
+  padding: 15px;
+}
+
+select {
+  padding: 8px;
+  width: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>La Brea Job Hub</h1>
+<p>Opportunities for South Trinidad Residents</p>
+</header>
+
+<nav>
+<a href="#jobs">Jobs</a>
+<a href="#programs">Programs</a>
+<a href="#guidance">Guidance</a>
+</nav>
+
+<div class="container">
+
+<section id="jobs">
+<h2>Job Opportunities</h2>
+
+<div class="card">
+<h3>Entry-Level Field Assistant</h3>
+<p><b>Industry:</b> Oil & Gas</p>
+<p><b>Requirements:</b> 3 CXC passes, Safety Certificate</p>
+<p>Assist technicians in field operations and maintenance.</p>
+<button onclick="alert('Application feature coming soon!')">Apply</button>
+</div>
+
+<div class="card">
+<h3>Solar Technician Trainee</h3>
+<p><b>Industry:</b> Renewable Energy</p>
+<p><b>Requirements:</b> Basic electrical knowledge</p>
+<p>Install and maintain solar systems.</p>
+<button onclick="alert('Application feature coming soon!')">Apply</button>
+</div>
+
+<div class="card">
+<h3>Warehouse Worker</h3>
+<p><b>Industry:</b> Logistics</p>
+<p><b>Requirements:</b> None</p>
+<p>Inventory handling and stock organization.</p>
+<button onclick="alert('Application feature coming soon!')">Apply</button>
+</div>
+
+</section>
+
+<section id="programs">
+<h2>Training Programs</h2>
+
+<div class="card">
+<h3>Energy Skills Training</h3>
+<p>Certifications in welding, electrical, and safety.</p>
+</div>
+
+<div class="card">
+<h3>Apprenticeships</h3>
+<p>Hands-on experience with companies in La Brea.</p>
+</div>
+
+<div class="card">
+<h3>Career Advancement Path</h3>
+<p>Move from entry-level to technician and supervisor roles.</p>
+</div>
+
+</section>
+
+<section id="guidance">
+<h2>Career Guidance</h2>
+
+<div class="card">
+<p>Not sure what job fits you?</p>
+
+<select id="choice">
+<option value="outdoor">Outdoor Work</option>
+<option value="indoor">Indoor Work</option>
+</select>
+
+<br><br>
+<button onclick="guide()">Get Advice</button>
+
+<p id="answer"></p>
+</div>
+
+</section>
+
+</div>
+
+<footer>
+<p>© 2026 La Brea Job Hub</p>
+</footer>
+
+<script>
+function guide() {
+  let c = document.getElementById("choice").value;
+  let ans = document.getElementById("answer");
+
+  if (c === "outdoor") {
+    ans.innerHTML = "Try Field Assistant or Solar Technician.";
+  } else {
+    ans.innerHTML = "Try Warehouse or Office-based roles.";
+  }
+}
+</script>
+
+</body>
+</html>
