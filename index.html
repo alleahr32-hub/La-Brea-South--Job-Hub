@@ -9,18 +9,45 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: #f0f4f8;
+  background: #eef2f7;
 }
 
+/* HEADER */
 header {
-  background: linear-gradient(135deg, #003366, #00a8e8);
+  background: linear-gradient(135deg, #002855, #00a8e8);
   color: white;
-  text-align: center;
-  padding: 30px 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
 }
 
+.logo {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #002855;
+  font-size: 20px;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* NAV */
 nav {
-  background: #002855;
+  background: #001d3d;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -28,7 +55,7 @@ nav {
 
 nav a {
   color: white;
-  padding: 12px 20px;
+  padding: 12px 18px;
   text-decoration: none;
   font-weight: bold;
 }
@@ -37,30 +64,38 @@ nav a:hover {
   background: #00a8e8;
 }
 
+/* CONTAINER */
 .container {
-  padding: 20px;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: auto;
+  padding: 20px;
 }
 
+/* CARDS */
 .card {
   background: white;
   margin: 15px 0;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 h2 {
-  color: #003366;
+  color: #002855;
 }
 
+/* BUTTON */
 button {
   background: #00a8e8;
   border: none;
   padding: 10px 15px;
   color: white;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
@@ -68,16 +103,19 @@ button:hover {
   background: #0077b6;
 }
 
+/* GUIDANCE */
+select {
+  padding: 10px;
+  width: 100%;
+}
+
+/* FOOTER */
 footer {
-  background: #003366;
+  background: #002855;
   color: white;
   text-align: center;
   padding: 15px;
-}
-
-select {
-  padding: 8px;
-  width: 100%;
+  margin-top: 20px;
 }
 </style>
 </head>
@@ -85,8 +123,11 @@ select {
 <body>
 
 <header>
-<h1>La Brea Job Hub</h1>
-<p>Opportunities for South Trinidad Residents</p>
+  <div class="logo">LB</div>
+  <div>
+    <h1>La Brea Job Hub</h1>
+    <p>Opportunities for South Trinidad Residents</p>
+  </div>
 </header>
 
 <nav>
@@ -98,10 +139,10 @@ select {
 <div class="container">
 
 <section id="jobs">
-<h2>Job Opportunities</h2>
+<h2>💼 Job Opportunities</h2>
 
 <div class="card">
-<h3>Entry-Level Field Assistant</h3>
+<h3>🔧 Entry-Level Field Assistant</h3>
 <p><b>Industry:</b> Oil & Gas</p>
 <p><b>Requirements:</b> 3 CXC passes, Safety Certificate</p>
 <p>Assist technicians in field operations and maintenance.</p>
@@ -109,7 +150,7 @@ select {
 </div>
 
 <div class="card">
-<h3>Solar Technician Trainee</h3>
+<h3>☀️ Solar Technician Trainee</h3>
 <p><b>Industry:</b> Renewable Energy</p>
 <p><b>Requirements:</b> Basic electrical knowledge</p>
 <p>Install and maintain solar systems.</p>
@@ -117,7 +158,7 @@ select {
 </div>
 
 <div class="card">
-<h3>Warehouse Worker</h3>
+<h3>📦 Warehouse Worker</h3>
 <p><b>Industry:</b> Logistics</p>
 <p><b>Requirements:</b> None</p>
 <p>Inventory handling and stock organization.</p>
@@ -127,27 +168,27 @@ select {
 </section>
 
 <section id="programs">
-<h2>Training Programs</h2>
+<h2>📚 Training Programs</h2>
 
 <div class="card">
 <h3>Energy Skills Training</h3>
-<p>Certifications in welding, electrical, and safety.</p>
+<p>Certifications in welding, electrical, and safety to enter oil & gas jobs.</p>
 </div>
 
 <div class="card">
 <h3>Apprenticeships</h3>
-<p>Hands-on experience with companies in La Brea.</p>
+<p>Hands-on experience with companies around La Brea.</p>
 </div>
 
 <div class="card">
 <h3>Career Advancement Path</h3>
-<p>Move from entry-level to technician and supervisor roles.</p>
+<p>Progress from entry-level worker to technician, supervisor, and beyond.</p>
 </div>
 
 </section>
 
 <section id="guidance">
-<h2>Career Guidance</h2>
+<h2>🧠 Career Guidance</h2>
 
 <div class="card">
 <p>Not sure what job fits you?</p>
@@ -168,7 +209,7 @@ select {
 </div>
 
 <footer>
-<p>© 2026 La Brea Job Hub</p>
+<p>© 2026 La Brea Job Hub | Empowering Our Community</p>
 </footer>
 
 <script>
@@ -177,9 +218,9 @@ function guide() {
   let ans = document.getElementById("answer");
 
   if (c === "outdoor") {
-    ans.innerHTML = "Try Field Assistant or Solar Technician.";
+    ans.innerHTML = "You should consider Field Assistant or Solar Technician roles.";
   } else {
-    ans.innerHTML = "Try Warehouse or Office-based roles.";
+    ans.innerHTML = "You should consider Warehouse or office-based roles.";
   }
 }
 </script>
