@@ -9,40 +9,30 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: #eef2f7;
+  background: linear-gradient(to right, #dbeafe, #f0f9ff);
 }
 
 /* HEADER */
 header {
   background: linear-gradient(135deg, #002855, #00a8e8);
   color: white;
-  padding: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  padding: 20px;
   gap: 15px;
 }
 
 .logo {
+  background: white;
+  color: #002855;
+  border-radius: 50%;
   width: 50px;
   height: 50px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: #002855;
-  font-size: 20px;
-}
-
-header h1 {
-  margin: 0;
-}
-
-header p {
-  margin: 0;
-  font-size: 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
 }
 
 /* NAV */
@@ -50,18 +40,12 @@ nav {
   background: #001d3d;
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
 nav a {
   color: white;
-  padding: 12px 18px;
+  padding: 12px;
   text-decoration: none;
-  font-weight: bold;
-}
-
-nav a:hover {
-  background: #00a8e8;
 }
 
 /* CONTAINER */
@@ -71,51 +55,62 @@ nav a:hover {
   padding: 20px;
 }
 
-/* CARDS */
+/* CARD */
 .card {
-  background: white;
-  margin: 15px 0;
+  background: linear-gradient(145deg, #ffffff, #e6f0ff);
   padding: 20px;
+  margin: 15px 0;
   border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-  transition: transform 0.2s;
+  border-left: 6px solid #00a8e8;
+  transition: 0.3s;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-}
-
-h2 {
-  color: #002855;
+  transform: scale(1.02);
 }
 
 /* BUTTON */
 button {
   background: #00a8e8;
   border: none;
-  padding: 10px 15px;
+  padding: 10px;
   color: white;
   border-radius: 6px;
   cursor: pointer;
+  margin-top: 5px;
 }
 
 button:hover {
   background: #0077b6;
 }
 
-/* GUIDANCE */
-select {
-  padding: 10px;
+/* INPUT */
+input, select {
   width: 100%;
+  padding: 10px;
+  margin: 8px 0;
 }
 
-/* FOOTER */
-footer {
-  background: #002855;
-  color: white;
-  text-align: center;
-  padding: 15px;
-  margin-top: 20px;
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  max-width: 400px;
+  margin: 10% auto;
+  border-radius: 10px;
+}
+
+/* MOBILE */
+@media (max-width:600px) {
+  button { width:100%; }
 }
 </style>
 </head>
@@ -123,107 +118,229 @@ footer {
 <body>
 
 <header>
-  <div class="logo">LB</div>
-  <div>
-    <h1>La Brea Job Hub</h1>
-    <p>Opportunities for South Trinidad Residents</p>
-  </div>
+<div class="logo">LB</div>
+<div>
+<h1>La Brea Job Hub</h1>
+<p>South Trinidad Opportunities</p>
+</div>
 </header>
 
 <nav>
-<a href="#jobs">Jobs</a>
-<a href="#programs">Programs</a>
-<a href="#guidance">Guidance</a>
+<a href="#">Jobs</a>
+<a href="#">Dashboard</a>
 </nav>
 
 <div class="container">
 
-<section id="jobs">
-<h2>💼 Job Opportunities</h2>
-
+<!-- AUTH -->
 <div class="card">
-<h3>🔧 Entry-Level Field Assistant</h3>
-<p><b>Industry:</b> Oil & Gas</p>
-<p><b>Requirements:</b> 3 CXC passes, Safety Certificate</p>
-<p>Assist technicians in field operations and maintenance.</p>
-<button onclick="alert('Application feature coming soon!')">Apply</button>
+<h3>🔐 Account</h3>
+<input id="authEmail" placeholder="Email">
+<input id="authPassword" type="password" placeholder="Password">
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Login</button>
+<p id="userStatus"></p>
 </div>
 
-<div class="card">
-<h3>☀️ Solar Technician Trainee</h3>
-<p><b>Industry:</b> Renewable Energy</p>
-<p><b>Requirements:</b> Basic electrical knowledge</p>
-<p>Install and maintain solar systems.</p>
-<button onclick="alert('Application feature coming soon!')">Apply</button>
-</div>
+<!-- SEARCH -->
+<input placeholder="Search jobs..." onkeyup="filterJobs(this.value)">
 
-<div class="card">
-<h3>📦 Warehouse Worker</h3>
-<p><b>Industry:</b> Logistics</p>
-<p><b>Requirements:</b> None</p>
-<p>Inventory handling and stock organization.</p>
-<button onclick="alert('Application feature coming soon!')">Apply</button>
-</div>
-
-</section>
-
-<section id="programs">
-<h2>📚 Training Programs</h2>
-
-<div class="card">
-<h3>Energy Skills Training</h3>
-<p>Certifications in welding, electrical, and safety to enter oil & gas jobs.</p>
-</div>
-
-<div class="card">
-<h3>Apprenticeships</h3>
-<p>Hands-on experience with companies around La Brea.</p>
-</div>
-
-<div class="card">
-<h3>Career Advancement Path</h3>
-<p>Progress from entry-level worker to technician, supervisor, and beyond.</p>
-</div>
-
-</section>
-
-<section id="guidance">
-<h2>🧠 Career Guidance</h2>
-
-<div class="card">
-<p>Not sure what job fits you?</p>
-
-<select id="choice">
-<option value="outdoor">Outdoor Work</option>
-<option value="indoor">Indoor Work</option>
+<select onchange="filterLocation(this.value)">
+<option>All</option>
+<option>Point Fortin</option>
+<option>La Brea</option>
+<option>San Fernando</option>
+<option>Siparia</option>
 </select>
 
-<br><br>
-<button onclick="guide()">Get Advice</button>
+<input placeholder="Enter skills (electrical, driving)" onchange="recommendJobs(this.value)">
 
-<p id="answer"></p>
+<!-- JOB LIST -->
+<div id="job-list"></div>
+
+<!-- ADMIN -->
+<div id="adminPanel" class="card" style="display:none;">
+<h3>Post Job</h3>
+<input id="jobTitle" placeholder="Job Title">
+<input id="company" placeholder="Company">
+<input id="location" placeholder="Location">
+<button onclick="postJob()">Post Job</button>
 </div>
 
-</section>
+<!-- USER APPLICATIONS -->
+<div id="myApps" class="card"></div>
 
 </div>
 
-<footer>
-<p>© 2026 La Brea Job Hub | Empowering Our Community</p>
-</footer>
+<!-- MODAL -->
+<div class="modal" id="formModal">
+<div class="modal-content">
+<h3>Apply</h3>
+<input type="file" id="resume">
+<button onclick="submitApplication()">Submit</button>
+<button onclick="closeForm()">Close</button>
+</div>
+</div>
 
-<script>
-function guide() {
-  let c = document.getElementById("choice").value;
-  let ans = document.getElementById("answer");
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-  if (c === "outdoor") {
-    ans.innerHTML = "You should consider Field Assistant or Solar Technician roles.";
-  } else {
-    ans.innerHTML = "You should consider Warehouse or office-based roles.";
+/* CONFIG */
+const firebaseConfig = {
+  apiKey: "YOUR-KEY",
+  authDomain: "YOUR-PROJECT.firebaseapp.com",
+  projectId: "YOUR-ID",
+  storageBucket: "YOUR-ID.appspot.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+/* AUTH */
+window.signup = async () => {
+  let email = authEmail.value;
+  let password = authPassword.value;
+
+  let userCred = await createUserWithEmailAndPassword(auth, email, password);
+
+  await setDoc(doc(db, "users", userCred.user.uid), {
+    email: email,
+    role: "jobseeker"
+  });
+
+  alert("Account created!");
+};
+
+window.login = async () => {
+  await signInWithEmailAndPassword(auth, authEmail.value, authPassword.value);
+};
+
+/* SESSION */
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    userStatus.innerText = "Logged in: " + user.email;
+    loadJobs();
+    loadMyApps();
+
+    const docSnap = await getDoc(doc(db, "users", user.uid));
+    if (docSnap.data().role === "employer") {
+      adminPanel.style.display = "block";
+    }
   }
+});
+
+/* LOAD JOBS */
+async function loadJobs() {
+  let snapshot = await getDocs(collection(db, "jobs"));
+  job-list.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    let job = doc.data();
+
+    let div = document.createElement("div");
+    div.className = "card";
+
+    let phone = "18681234567";
+
+    div.innerHTML = `
+      <h3>${job.title}</h3>
+      <p>${job.company} - ${job.location}</p>
+
+      <button onclick="apply('${job.title}')">Apply</button>
+
+      <a href="https://wa.me/${phone}?text=Apply for ${job.title}" target="_blank">
+        <button style="background:green;">WhatsApp</button>
+      </a>
+    `;
+
+    job-list.appendChild(div);
+  });
 }
+
+/* APPLY */
+window.apply = (job) => {
+  formModal.style.display = "block";
+  window.selectedJob = job;
+};
+
+window.submitApplication = async () => {
+  let user = auth.currentUser;
+  let file = resume.files[0];
+
+  let storageRef = ref(storage, "resumes/" + user.uid + "_" + file.name);
+  await uploadBytes(storageRef, file);
+  let url = await getDownloadURL(storageRef);
+
+  await addDoc(collection(db, "applications"), {
+    user: user.email,
+    job: selectedJob,
+    resumeURL: url,
+    date: new Date()
+  });
+
+  alert("Application sent!");
+};
+
+/* POST JOB */
+window.postJob = async () => {
+  await addDoc(collection(db, "jobs"), {
+    title: jobTitle.value,
+    company: company.value,
+    location: location.value
+  });
+
+  alert("Job posted!");
+  loadJobs();
+};
+
+/* FILTERS */
+window.filterJobs = (text) => {
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(text.toLowerCase()) ? "block" : "none";
+  });
+};
+
+window.filterLocation = (loc) => {
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = (loc === "All" || card.innerText.includes(loc)) ? "block" : "none";
+  });
+};
+
+/* AI MATCH */
+window.recommendJobs = (skills) => {
+  let keys = skills.toLowerCase().split(",");
+  document.querySelectorAll(".card").forEach(card => {
+    if (keys.some(k => card.innerText.toLowerCase().includes(k.trim()))) {
+      card.style.border = "3px solid green";
+    }
+  });
+};
+
+/* DASHBOARD */
+async function loadMyApps() {
+  let user = auth.currentUser;
+  let snapshot = await getDocs(collection(db, "applications"));
+
+  myApps.innerHTML = "<h3>My Applications</h3>";
+
+  snapshot.forEach(doc => {
+    let app = doc.data();
+    if (app.user === user.email) {
+      myApps.innerHTML += `<p>${app.job}</p>`;
+    }
+  });
+}
+
+/* MODAL */
+window.closeForm = () => formModal.style.display = "none";
+
 </script>
 
 </body>
 </html>
+
