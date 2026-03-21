@@ -82,7 +82,7 @@ input, select, textarea {
 
 <header>
 <h1>La Brea Job Hub</h1>
-<p>Entry-Level Jobs • Training • Career Guidance</p>
+<p>Jobs • Training • Career Guidance</p>
 </header>
 
 <nav>
@@ -97,14 +97,8 @@ input, select, textarea {
 <div class="card">
 <h3>🎯 Find Your Path</h3>
 <button onclick="quickStart('fast')">Get Job Fast</button>
-<button onclick="quickStart('skill')">Learn a Skill</button>
+<button onclick="quickStart('skill')">Learn Skill</button>
 <button onclick="quickStart('career')">Build Career</button>
-</div>
-
-<!-- CAREER GUIDE -->
-<div class="card">
-<h3>🚀 Not Sure Where to Start?</h3>
-<button onclick="startGuide()">Start Career Guide</button>
 </div>
 
 <!-- AUTH -->
@@ -117,22 +111,10 @@ input, select, textarea {
 <p id="userStatus"></p>
 </div>
 
-<!-- TRAINING -->
-<div class="card">
-<h3>📚 Training Programs</h3>
-<ul>
-<li>Welding → Helper → Certified Welder</li>
-<li>Electrical → Assistant → Electrician</li>
-<li>Oil & Gas Safety → Entry → Technician</li>
-<li>Solar Installation → Assistant → Solar Tech</li>
-</ul>
-</div>
-
 <!-- COUNSELING -->
 <div class="card">
-<h3>🧠 Free Career Counseling</h3>
-
-<input id="name" placeholder="Full Name">
+<h3>🧠 Career Counseling</h3>
+<input id="name" placeholder="Name">
 <input id="age" placeholder="Age">
 
 <select id="interest">
@@ -143,20 +125,33 @@ input, select, textarea {
 </select>
 
 <select id="education">
-<option>Secondary School</option>
-<option>CXC Completed</option>
-<option>Some Experience</option>
+<option>Secondary</option>
+<option>CXC</option>
+<option>Experience</option>
 </select>
 
 <select id="goal">
-<option>Get a job fast</option>
-<option>Learn a skill</option>
-<option>Long-term career</option>
+<option>Get job fast</option>
+<option>Learn skill</option>
+<option>Career</option>
 </select>
 
 <input type="date" id="date">
 
 <button onclick="bookSession()">Book Appointment</button>
+</div>
+
+<!-- TRAINING RECOMMEND -->
+<div class="card">
+<h3>🤖 Recommended Training</h3>
+<button onclick="recommendTraining()">Get Recommendation</button>
+<p id="recommendResult"></p>
+</div>
+
+<!-- TRAINING -->
+<div class="card">
+<h3>📚 Training Programs</h3>
+<div id="trainingList"></div>
 </div>
 
 <!-- SEARCH -->
@@ -169,13 +164,12 @@ input, select, textarea {
 <option>Renewable Energy</option>
 </select>
 
-<!-- JOB LIST -->
+<!-- JOBS -->
 <div id="jobList"></div>
 
 <!-- ADMIN -->
 <div id="adminPanel" class="card" style="display:none;">
 <h3>Post Job</h3>
-
 <input id="jobTitle" placeholder="Title">
 <input id="company" placeholder="Company">
 <input id="location" placeholder="Location">
@@ -194,21 +188,34 @@ input, select, textarea {
 
 <textarea id="description" placeholder="Description"></textarea>
 
-<button onclick="postJob()">Submit Job</button>
+<button onclick="postJob()">Submit</button>
 </div>
 
-<!-- APPLICATIONS -->
+<!-- DASHBOARDS -->
 <div id="myApps" class="card"></div>
+<div id="trainingDashboard" class="card"></div>
 
 </div>
 
-<!-- APPLY MODAL -->
+<!-- JOB APPLY MODAL -->
 <div class="modal" id="formModal">
 <div class="modal-content">
-<h3>Apply</h3>
+<h3>Apply for Job</h3>
 <input type="file" id="resume">
 <button onclick="submitApplication()">Submit</button>
 <button onclick="closeForm()">Close</button>
+</div>
+</div>
+
+<!-- TRAINING APPLY MODAL -->
+<div class="modal" id="trainingModal">
+<div class="modal-content">
+<h3>Apply for Training</h3>
+<input id="tName" placeholder="Full Name">
+<input id="tPhone" placeholder="Phone">
+<input id="tReason" placeholder="Why interested?">
+<button onclick="submitTrainingApp()">Submit</button>
+<button onclick="closeTraining()">Close</button>
 </div>
 </div>
 
@@ -230,18 +237,12 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 /* AUTH */
-window.signup = async ()=>{
+window.signup = async()=>{
   let user = await createUserWithEmailAndPassword(auth, authEmail.value, authPassword.value);
-
-  await setDoc(doc(db,"users",user.user.uid),{
-    email:authEmail.value,
-    role:"jobseeker"
-  });
-
-  alert("Account created");
+  await setDoc(doc(db,"users",user.user.uid),{email:authEmail.value,role:"jobseeker"});
 };
 
-window.login = async ()=>{
+window.login = async()=>{
   await signInWithEmailAndPassword(auth, authEmail.value, authPassword.value);
 };
 
@@ -251,6 +252,8 @@ onAuthStateChanged(auth, async(user)=>{
     userStatus.innerText="Logged in: "+user.email;
     loadJobs();
     loadApps();
+    loadTraining();
+    loadTrainingDashboard();
 
     let snap = await getDoc(doc(db,"users",user.uid));
     if(snap.data().role==="employer"){
@@ -259,28 +262,26 @@ onAuthStateChanged(auth, async(user)=>{
   }
 });
 
-/* LOAD JOBS */
+/* JOBS */
 async function loadJobs(){
   let list = document.getElementById("jobList");
   list.innerHTML="";
 
   let snap = await getDocs(collection(db,"jobs"));
-
   snap.forEach(d=>{
-    let job = d.data();
+    let job=d.data();
     if(!job.approved) return;
 
-    let div = document.createElement("div");
+    let div=document.createElement("div");
     div.className="card";
     div.dataset.category=job.category;
 
     div.innerHTML=`
       <h3>${job.title}</h3>
-      <p><b>${job.company}</b> - ${job.location}</p>
+      <p>${job.company} - ${job.location}</p>
       <p>${job.description}</p>
       <p>${job.category} | ${job.experience}</p>
-      <p>💰 ${job.salary||"Not listed"}</p>
-
+      <p>💰 ${job.salary||"N/A"}</p>
       <button onclick="apply('${job.title}')">Apply</button>
     `;
 
@@ -288,93 +289,81 @@ async function loadJobs(){
   });
 }
 
-/* APPLY */
 window.apply=(job)=>{
   formModal.style.display="block";
   window.selectedJob=job;
 };
 
-window.submitApplication = async()=>{
-  let user = auth.currentUser;
-  let file = resume.files[0];
+window.submitApplication=async()=>{
+  let user=auth.currentUser;
+  let file=resume.files[0];
 
-  let refPath = ref(storage,"resumes/"+user.uid+"_"+file.name);
-  await uploadBytes(refPath,file);
-  let url = await getDownloadURL(refPath);
+  let r=ref(storage,"resumes/"+user.uid+"_"+file.name);
+  await uploadBytes(r,file);
+  let url=await getDownloadURL(r);
 
   await addDoc(collection(db,"applications"),{
-    user:user.email,
-    job:selectedJob,
-    resume:url
+    user:user.email,job:selectedJob,resume:url
   });
 
   alert("Application sent!");
 };
 
-/* JOB POST */
-window.postJob = async()=>{
-  await addDoc(collection(db,"jobs"),{
-    title:jobTitle.value,
-    company:company.value,
-    location:location.value,
-    description:description.value,
-    category:category.value,
-    experience:experience.value,
-    salary:salary.value,
-    approved:false
+/* TRAINING */
+async function loadTraining(){
+  let list=document.getElementById("trainingList");
+  list.innerHTML="";
+
+  let snap=await getDocs(collection(db,"training"));
+  snap.forEach(docSnap=>{
+    let t=docSnap.data();
+
+    let div=document.createElement("div");
+    div.className="card";
+
+    div.innerHTML=`
+      <h3>${t.title}</h3>
+      <p>${t.description}</p>
+      <p>📍 ${t.location}</p>
+      <p>⏳ ${t.duration}</p>
+      <p>🎯 ${t.outcome}</p>
+      <p>💲 ${t.cost}</p>
+      <p>📅 ${t.startDate}</p>
+      <button onclick="applyTraining('${t.title}')">Apply</button>
+    `;
+
+    list.appendChild(div);
+  });
+}
+
+window.applyTraining=(title)=>{
+  selectedTraining=title;
+  trainingModal.style.display="block";
+};
+
+window.submitTrainingApp=async()=>{
+  let user=auth.currentUser;
+
+  await addDoc(collection(db,"trainingApplications"),{
+    user:user.email,
+    name:tName.value,
+    phone:tPhone.value,
+    program:selectedTraining,
+    status:"pending",
+    certificate:false
   });
 
-  alert("Submitted for approval");
+  alert("Training application sent!");
 };
 
-/* COUNSELING */
-window.bookSession = async()=>{
-  await addDoc(collection(db,"appointments"),{
-    name:name.value,
-    age:age.value,
-    interest:interest.value,
-    education:education.value,
-    goal:goal.value,
-    date:date.value
-  });
-
-  alert("Appointment booked!");
-};
-
-/* FILTER */
-window.filterJobs=(text)=>{
-  document.querySelectorAll(".card").forEach(c=>{
-    c.style.display=c.innerText.toLowerCase().includes(text.toLowerCase())?"block":"none";
-  });
-};
-
-window.filterCategory=(cat)=>{
-  document.querySelectorAll(".card").forEach(c=>{
-    c.style.display=(cat==="All"||c.dataset.category===cat)?"block":"none";
-  });
-};
-
-/* GUIDE */
-window.quickStart=(type)=>{
-  if(type==="fast") alert("Try: Labour, Retail, Helpers");
-  if(type==="skill") alert("Try: Welding, Electrical Training");
-  if(type==="career") alert("Try: Oil & Gas or Renewable Energy");
-};
-
-window.startGuide=()=>{
-  let c=prompt("1 Hands-on\n2 Outdoor\n3 Technical");
-  if(c=="1") alert("Trades");
-  if(c=="2") alert("Construction / Oil & Gas");
-  if(c=="3") alert("Renewable / IT");
-};
+window.closeTraining=()=>trainingModal.style.display="none";
 
 /* DASHBOARD */
 async function loadApps(){
-  let user = auth.currentUser;
-  let snap = await getDocs(collection(db,"applications"));
+  let user=auth.currentUser;
+  let snap=await getDocs(collection(db,"applications"));
 
-  myApps.innerHTML="<h3>My Applications</h3>";
-
+  myApps.innerHTML="<h3>My Job Applications</h3>";
   snap.forEach(d=>{
     let a=d.data();
     if(a.user===user.email){
@@ -383,9 +372,67 @@ async function loadApps(){
   });
 }
 
-window.closeForm=()=>formModal.style.display="none";
+async function loadTrainingDashboard(){
+  let user=auth.currentUser;
+  let snap=await getDocs(collection(db,"trainingApplications"));
 
+  trainingDashboard.innerHTML="<h3>🎓 My Training</h3>";
+
+  snap.forEach(d=>{
+    let t=d.data();
+    if(t.user===user.email){
+      trainingDashboard.innerHTML+=`
+        <p>${t.program} - ${t.status} 
+        ${t.certificate?"✅ Certificate":"⏳ In Progress"}
+        </p>
+      `;
+    }
+  });
+}
+
+/* COUNSELING */
+window.bookSession=async()=>{
+  await addDoc(collection(db,"appointments"),{
+    name:name.value,age:age.value,interest:interest.value,education:education.value,goal:goal.value,date:date.value
+  });
+  alert("Appointment booked!");
+};
+
+/* RECOMMEND */
+window.recommendTraining=()=>{
+  let i=interest.value;
+  let r="";
+  if(i==="Hands-on work") r="Welding or Electrical";
+  else if(i==="Outdoor work") r="Oil & Gas";
+  else if(i==="Technical career") r="Solar Training";
+  else r="Customer Service";
+
+  recommendResult.innerText=r;
+};
+
+/* FILTER */
+window.filterJobs=(text)=>{
+  document.querySelectorAll("#jobList .card").forEach(c=>{
+    c.style.display=c.innerText.toLowerCase().includes(text.toLowerCase())?"block":"none";
+  });
+};
+
+window.filterCategory=(cat)=>{
+  document.querySelectorAll("#jobList .card").forEach(c=>{
+    c.style.display=(cat==="All"||c.dataset.category===cat)?"block":"none";
+  });
+};
+
+/* GUIDE */
+window.quickStart=(t)=>{
+  if(t==="fast") alert("Try helper or retail jobs");
+  if(t==="skill") alert("Try training programs");
+  if(t==="career") alert("Try oil & gas or renewable");
+};
+
+window.closeForm=()=>formModal.style.display="none";
 </script>
 
 </body>
 </html>
+
