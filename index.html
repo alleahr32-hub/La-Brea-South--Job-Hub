@@ -12,7 +12,6 @@ body {
   background: linear-gradient(to right, #dbeafe, #f0f9ff);
 }
 
-/* HEADER */
 header {
   background: linear-gradient(135deg, #002855, #00a8e8);
   color: white;
@@ -20,22 +19,8 @@ header {
   justify-content: center;
   align-items: center;
   padding: 20px;
-  gap: 15px;
 }
 
-.logo {
-  background: white;
-  color: #002855;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-}
-
-/* NAV */
 nav {
   background: #001d3d;
   display: flex;
@@ -48,28 +33,20 @@ nav a {
   text-decoration: none;
 }
 
-/* CONTAINER */
 .container {
   max-width: 1100px;
   margin: auto;
   padding: 20px;
 }
 
-/* CARD */
 .card {
-  background: linear-gradient(145deg, #ffffff, #e6f0ff);
+  background: white;
   padding: 20px;
   margin: 15px 0;
   border-radius: 12px;
   border-left: 6px solid #00a8e8;
-  transition: 0.3s;
 }
 
-.card:hover {
-  transform: scale(1.02);
-}
-
-/* BUTTON */
 button {
   background: #00a8e8;
   border: none;
@@ -77,21 +54,14 @@ button {
   color: white;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 5px;
 }
 
-button:hover {
-  background: #0077b6;
-}
-
-/* INPUT */
-input, select {
+input, select, textarea {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
 }
 
-/* MODAL */
 .modal {
   display: none;
   position: fixed;
@@ -105,12 +75,6 @@ input, select {
   padding: 20px;
   max-width: 400px;
   margin: 10% auto;
-  border-radius: 10px;
-}
-
-/* MOBILE */
-@media (max-width:600px) {
-  button { width:100%; }
 }
 </style>
 </head>
@@ -118,23 +82,26 @@ input, select {
 <body>
 
 <header>
-<div class="logo">LB</div>
-<div>
 <h1>La Brea Job Hub</h1>
-<p>South Trinidad Opportunities</p>
-</div>
 </header>
 
 <nav>
 <a href="#">Jobs</a>
-<a href="#">Dashboard</a>
+<a href="#">Training</a>
+<a href="#">Career Guide</a>
 </nav>
 
 <div class="container">
 
+<!-- START HERE -->
+<div class="card">
+<h3>🚀 Not Sure Where to Start?</h3>
+<button onclick="startGuide()">Start Career Guide</button>
+</div>
+
 <!-- AUTH -->
 <div class="card">
-<h3>🔐 Account</h3>
+<h3>Account</h3>
 <input id="authEmail" placeholder="Email">
 <input id="authPassword" type="password" placeholder="Password">
 <button onclick="signup()">Sign Up</button>
@@ -142,33 +109,52 @@ input, select {
 <p id="userStatus"></p>
 </div>
 
-<!-- SEARCH -->
+<!-- TRAINING -->
+<div class="card">
+<h3>📚 Training Programs</h3>
+<ul>
+<li>Welding Training → Helper → Certified Welder</li>
+<li>Electrical → Assistant → Licensed Electrician</li>
+<li>Oil & Gas Safety → Entry Worker → Technician</li>
+<li>Solar Installation → Assistant → Solar Technician</li>
+</ul>
+</div>
+
+<!-- FILTER -->
 <input placeholder="Search jobs..." onkeyup="filterJobs(this.value)">
 
-<select onchange="filterLocation(this.value)">
+<select onchange="filterCategory(this.value)">
 <option>All</option>
-<option>Point Fortin</option>
-<option>La Brea</option>
-<option>San Fernando</option>
-<option>Siparia</option>
+<option>Trade</option>
+<option>Oil & Gas</option>
+<option>Renewable Energy</option>
 </select>
 
-<input placeholder="Enter skills (electrical, driving)" onchange="recommendJobs(this.value)">
-
 <!-- JOB LIST -->
-<div id="job-list"></div>
+<div id="jobList"></div>
 
 <!-- ADMIN -->
 <div id="adminPanel" class="card" style="display:none;">
-<h3>Post Job</h3>
-<input id="jobTitle" placeholder="Job Title">
+<h3>Post Job (Needs Approval)</h3>
+<input id="jobTitle" placeholder="Title">
 <input id="company" placeholder="Company">
 <input id="location" placeholder="Location">
-<button onclick="postJob()">Post Job</button>
-</div>
 
-<!-- USER APPLICATIONS -->
-<div id="myApps" class="card"></div>
+<select id="category">
+<option>Trade</option>
+<option>Oil & Gas</option>
+<option>Renewable Energy</option>
+</select>
+
+<select id="experience">
+<option>No Experience</option>
+<option>Some Experience</option>
+</select>
+
+<textarea id="description" placeholder="Description"></textarea>
+
+<button onclick="postJob()">Submit Job</button>
+</div>
 
 </div>
 
@@ -186,34 +172,24 @@ input, select {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-/* CONFIG */
-const firebaseConfig = {
+const app = initializeApp({
   apiKey: "YOUR-KEY",
   authDomain: "YOUR-PROJECT.firebaseapp.com",
-  projectId: "YOUR-ID",
-  storageBucket: "YOUR-ID.appspot.com"
-};
+  projectId: "YOUR-ID"
+});
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 /* AUTH */
 window.signup = async () => {
-  let email = authEmail.value;
-  let password = authPassword.value;
+  let user = await createUserWithEmailAndPassword(auth, authEmail.value, authPassword.value);
 
-  let userCred = await createUserWithEmailAndPassword(auth, email, password);
-
-  await setDoc(doc(db, "users", userCred.user.uid), {
-    email: email,
+  await setDoc(doc(db, "users", user.user.uid), {
+    email: authEmail.value,
     role: "jobseeker"
   });
-
-  alert("Account created!");
 };
 
 window.login = async () => {
@@ -225,42 +201,79 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     userStatus.innerText = "Logged in: " + user.email;
     loadJobs();
-    loadMyApps();
 
-    const docSnap = await getDoc(doc(db, "users", user.uid));
-    if (docSnap.data().role === "employer") {
+    let snap = await getDoc(doc(db, "users", user.uid));
+    if (snap.data().role === "employer") {
       adminPanel.style.display = "block";
     }
   }
 });
 
-/* LOAD JOBS */
+/* LOAD JOBS (ONLY APPROVED) */
 async function loadJobs() {
-  let snapshot = await getDocs(collection(db, "jobs"));
-  job-list.innerHTML = "";
+  const jobList = document.getElementById("jobList");
+  jobList.innerHTML = "";
 
-  snapshot.forEach(doc => {
-    let job = doc.data();
+  let snapshot = await getDocs(collection(db, "jobs"));
+
+  snapshot.forEach(docSnap => {
+    let job = docSnap.data();
+
+    if (!job.approved) return;
 
     let div = document.createElement("div");
     div.className = "card";
-
-    let phone = "18681234567";
+    div.setAttribute("data-category", job.category);
 
     div.innerHTML = `
       <h3>${job.title}</h3>
       <p>${job.company} - ${job.location}</p>
+      <p>${job.description}</p>
+      <p>${job.category} | ${job.experience}</p>
 
       <button onclick="apply('${job.title}')">Apply</button>
-
-      <a href="https://wa.me/${phone}?text=Apply for ${job.title}" target="_blank">
-        <button style="background:green;">WhatsApp</button>
-      </a>
     `;
 
-    job-list.appendChild(div);
+    jobList.appendChild(div);
   });
 }
+
+/* POST JOB (NOT APPROVED YET) */
+window.postJob = async () => {
+  await addDoc(collection(db, "jobs"), {
+    title: jobTitle.value,
+    company: company.value,
+    location: location.value,
+    description: description.value,
+    category: category.value,
+    experience: experience.value,
+    approved: false
+  });
+
+  alert("Job submitted for approval");
+};
+
+/* FILTER */
+window.filterJobs = (text) => {
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(text.toLowerCase()) ? "block" : "none";
+  });
+};
+
+window.filterCategory = (cat) => {
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = (cat === "All" || card.dataset.category === cat) ? "block" : "none";
+  });
+};
+
+/* CAREER GUIDE */
+window.startGuide = () => {
+  let choice = prompt("1: Hands-on work\n2: Outdoor work\n3: Technical career");
+
+  if (choice == "1") alert("Try Trades (Electrician, Welding)");
+  if (choice == "2") alert("Try Construction or Oil & Gas");
+  if (choice == "3") alert("Try Renewable Energy or IT");
+};
 
 /* APPLY */
 window.apply = (job) => {
@@ -268,79 +281,9 @@ window.apply = (job) => {
   window.selectedJob = job;
 };
 
-window.submitApplication = async () => {
-  let user = auth.currentUser;
-  let file = resume.files[0];
-
-  let storageRef = ref(storage, "resumes/" + user.uid + "_" + file.name);
-  await uploadBytes(storageRef, file);
-  let url = await getDownloadURL(storageRef);
-
-  await addDoc(collection(db, "applications"), {
-    user: user.email,
-    job: selectedJob,
-    resumeURL: url,
-    date: new Date()
-  });
-
-  alert("Application sent!");
-};
-
-/* POST JOB */
-window.postJob = async () => {
-  await addDoc(collection(db, "jobs"), {
-    title: jobTitle.value,
-    company: company.value,
-    location: location.value
-  });
-
-  alert("Job posted!");
-  loadJobs();
-};
-
-/* FILTERS */
-window.filterJobs = (text) => {
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = card.innerText.toLowerCase().includes(text.toLowerCase()) ? "block" : "none";
-  });
-};
-
-window.filterLocation = (loc) => {
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = (loc === "All" || card.innerText.includes(loc)) ? "block" : "none";
-  });
-};
-
-/* AI MATCH */
-window.recommendJobs = (skills) => {
-  let keys = skills.toLowerCase().split(",");
-  document.querySelectorAll(".card").forEach(card => {
-    if (keys.some(k => card.innerText.toLowerCase().includes(k.trim()))) {
-      card.style.border = "3px solid green";
-    }
-  });
-};
-
-/* DASHBOARD */
-async function loadMyApps() {
-  let user = auth.currentUser;
-  let snapshot = await getDocs(collection(db, "applications"));
-
-  myApps.innerHTML = "<h3>My Applications</h3>";
-
-  snapshot.forEach(doc => {
-    let app = doc.data();
-    if (app.user === user.email) {
-      myApps.innerHTML += `<p>${app.job}</p>`;
-    }
-  });
-}
-
-/* MODAL */
 window.closeForm = () => formModal.style.display = "none";
 
 </script>
 
 </body>
 </html>
-
